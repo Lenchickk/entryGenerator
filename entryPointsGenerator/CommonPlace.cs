@@ -25,13 +25,14 @@ namespace entryPointsGenerator
             return false;
         }
 
-        static public Int16 Depth = 3;
+        static public Int16 Depth = 2;
         static public void Activate()
         {
-            entrypagesTable = CreateDataTable();
+            entryEdgesTable = CreateEdgesTable();
+            entryVerticesTable = CreateVerticesTable();
             CreateSeeAlsoDict();
             CreateSeeAlsoDict2();
-            visited = new PairVisited();
+            nodes = new PairVisited();
             domainPair = new List<DomainPair>();
         }
         static public String LookUpPage(String domain, String name)
@@ -39,13 +40,31 @@ namespace entryPointsGenerator
             return (@"http://" + domain + ".wikipedia.org/wiki/" + name);
         }
 
-        public static DataTable entrypagesTable;
+        public static DataTable entryEdgesTable;
+        public static DataTable entryVerticesTable;
         public static Dictionary<String, String> seeAlso;
         public static Dictionary<String, String> seeAlso2;
-        public static PairVisited visited;
+        public static PairVisited nodes;
         public static List<DomainPair> domainPair;
 
-        static public DataTable CreateDataTable()
+        static public DataTable CreateEdgesTable()
+        {
+            DataTable entrypagesTable = new DataTable();
+            entrypagesTable.Columns.Add("ID", typeof(int));
+            entrypagesTable.Columns.Add("childID", typeof(int));
+            entrypagesTable.Columns.Add("groupID", typeof(int));
+            entrypagesTable.Columns.Add("groupName", typeof(string));
+            entrypagesTable.Columns.Add("domain", typeof(string));
+            entrypagesTable.Columns.Add("name", typeof(string));
+            entrypagesTable.Columns.Add("fullname", typeof(string));
+            entrypagesTable.Columns.Add("parentname", typeof(string));
+            entrypagesTable.Columns.Add("parentfullname", typeof(string));
+            entrypagesTable.Columns.Add("parentID", typeof(int));
+  
+            return entrypagesTable;
+        }
+
+        static public DataTable CreateVerticesTable()
         {
             DataTable entrypagesTable = new DataTable();
             entrypagesTable.Columns.Add("ID", typeof(int));
@@ -54,21 +73,17 @@ namespace entryPointsGenerator
             entrypagesTable.Columns.Add("domain", typeof(string));
             entrypagesTable.Columns.Add("name", typeof(string));
             entrypagesTable.Columns.Add("fullname", typeof(string));
-            entrypagesTable.Columns.Add("parentname", typeof(string));
-            entrypagesTable.Columns.Add("parentfullname", typeof(string));
             entrypagesTable.Columns.Add("depth", typeof(int));
-            entrypagesTable.Columns.Add("parentID", typeof(int));
             entrypagesTable.Columns.Add("weight", typeof(int));
             entrypagesTable.Columns.Add("ru", typeof(string));
             entrypagesTable.Columns.Add("en", typeof(string));
             entrypagesTable.Columns.Add("uk", typeof(string));
-            entrypagesTable.Columns.Add("cyear", typeof(string));
-            entrypagesTable.Columns.Add("cday", typeof(string));
-            entrypagesTable.Columns.Add("cmonth", typeof(string));
+            entrypagesTable.Columns.Add("cyear", typeof(int));
+            entrypagesTable.Columns.Add("cday", typeof(int));
+            entrypagesTable.Columns.Add("cmonth", typeof(int));
             entrypagesTable.Columns.Add("time", typeof(string));
             return entrypagesTable;
         }
-
 
         public static void CreateSeeAlsoDict()
         {
@@ -94,35 +109,67 @@ namespace entryPointsGenerator
 
         public static DataTable CopyEntityTable()
         {
-            return entrypagesTable.Copy();
+            return entryVerticesTable.Copy();
         }
 
         public static void TableToFile(String file)
         {
+            String file2 = file + "Vertices.csv";
+            String file1 = file + "Edges_in.csv";
             StreamWriter sw;
             UpdateRows();
 
-            if (File.Exists(file))
+            if (File.Exists(file1))
             {
-                File.Delete(file);
+                File.Delete(file1);
             }
             if (false)
             {
-                sw = new StreamWriter(file, false);
+                sw = new StreamWriter(file1, false);
             }
             else
             {
-                sw = new StreamWriter(file, true, System.Text.Encoding.UTF8);
-                sw.WriteLine("ID\tgroupID\tgroupName\tdomain\tname\tparentname\tfullname\tparentfulname\tdepth\tparentID\tweight\trunode\tennode\tuknode\tyear\tday\tmonth\ttime");
+                sw = new StreamWriter(file1, true, System.Text.Encoding.UTF8);
+                //sw.WriteLine("ID\tchildID\tgroupID\tgroupName\tdomain\tname\tparentname\tfullname\tparentfulname\tdepth\tparentID\tweight\trunode\tennode\tuknode\tyear\tday\tmonth\ttime");
+                sw.WriteLine("ID\tchildID\tgroupID\tgroupName\tdomain\tname\tparentname\tfullname\tparentfulname\tparentID");
             }
 
-            foreach (DataRow r in entrypagesTable.Rows)
+            foreach (DataRow r in entryVerticesTable.Rows)
             {
-                sw.WriteLine(r["ID"] + "\t" + r["groupID"] + "\t" + r["groupName"] + "\t" + r["domain"] + "\t" + r["name"]
-                    + "\t" + r["parentname"] + "\t" + r["fullname"] + "\t" + r["parentfullname"] + "\t" + r["depth"] + "\t" + r["parentID"] + "\t" + r["weight"] + "\t" + r["ru"] + "\t" + r["en"] + "\t"
-                    + r["uk"] + "\t" + r["cyear"] + "\t" + r["cday"] + "\t" + r["cmonth"] + "\t" + r["time"]);
+
+                sw.WriteLine(r["ID"] + "\t" +  r["groupID"] + "\t" + r["groupName"] + "\t" + r["domain"] + "\t" + r["name"]
+                        + "\t" + r["fullname"] + "\t" + r["depth"] + "\t" + r["weight"] + "\t" + r["ru"] + "\t" + r["en"] + "\t" + r["uk"] + "\t" + r["cyear"] +
+                      "\t" + r["cday"] + "\t" + r["cmonth"] + "\t" + r["time"]);
             }
+
+
+     
+
+
             sw.Close();
+
+            if (File.Exists(file2))
+            {
+                File.Delete(file2);
+            }
+            if (false)
+            {
+                sw = new StreamWriter(file2, false);
+            }
+            else
+            {
+                sw = new StreamWriter(file2, true, System.Text.Encoding.UTF8);
+                sw.WriteLine("ID\tgroupID\tgroupName\tdomain\tname\tfullname\tdepth\tweight\tru\ten\tuk\tcyear\tcday\tcmonth\ttime");
+            }
+
+            foreach (DataRow r in entryEdgesTable.Rows)
+            {
+                sw.WriteLine(r["ID"] + "\t" + r["childID"] + "\t" + r["groupID"] + "\t" + r["groupName"] + "\t" + r["domain"] + "\t" + r["name"]
+                   + "\t" + r["parentname"] + "\t" + r["fullname"] + "\t" + r["parentfullname"] + "\t" + r["parentID"]);
+             }
+
+
+
         }
         static public DateTime ReturnCreationDate(string domain, string name)
         {
@@ -150,23 +197,18 @@ namespace entryPointsGenerator
         }
         public static void UpdateRows()
         {
-            foreach (DataRow r in entrypagesTable.Rows)
+            foreach (DataRow r in entryVerticesTable.Rows)
             {
-                DateTime created = ReturnCreationDate(r["domain"].ToString(), r["name"].ToString());
-                String create = created.Day + "." + created.Month + "." + created.Year;
-                r["cyear"] = created.Year;
-                r["cday"] = created.Day;
-                r["cmonth"] = created.Month;
-                r["weight"] = CommonPlace.visited.GetWeight(r["domain"].ToString(), r["name"].ToString());
-                r["time"] = created.TimeOfDay;
-
+    
+                r["weight"] = CommonPlace.nodes.GetWeight(r["domain"].ToString(), r["name"].ToString());
+    
 
                 foreach (DomainPair dp in domainPair)
                 {
                     if (dp.lang1 == dp.lang2) continue;
                     if (dp.page1 == r["name"].ToString())
                     {
-                        foreach (DataRow rr in entrypagesTable.Rows)
+                        foreach (DataRow rr in entryVerticesTable.Rows)
                         {
                             if (r == rr) continue;
                             if (dp.page2 == rr["name"].ToString())
@@ -179,7 +221,7 @@ namespace entryPointsGenerator
                     }
                     if (dp.page2 == r["name"].ToString())
                     {
-                        foreach (DataRow rr in entrypagesTable.Rows)
+                        foreach (DataRow rr in entryVerticesTable.Rows)
                         {
                             if (r == rr) continue;
                             if (dp.page1 == rr["name"].ToString())

@@ -23,9 +23,11 @@ namespace entryPointsGenerator
 
             List<String> domains;
             String lookupage = "";
-
+            CommonPlace.nodes = new PairVisited(); 
             StreamReader sr = new StreamReader(file);
-            CommonPlace.entrypagesTable = CommonPlace.CreateDataTable();
+            CommonPlace.entryEdgesTable = CommonPlace.CreateEdgesTable();
+            CommonPlace.entryVerticesTable = CommonPlace.CreateVerticesTable();
+
             sr.ReadLine();
 
             while (((str = sr.ReadLine()) != null) && (str != ""))
@@ -36,20 +38,14 @@ namespace entryPointsGenerator
                 string domain = input[2];
                 string name = input[3];
                 string fullname = input[4];
-                //Int32 depth = Int32.Parse(input[5]);
                 lookupage = CommonPlace.LookUpPage(domain, name);
-                //DateTime created = CommonPlace.ReturnCreationDate(domain, name);
-                CommonPlace.entrypagesTable.Rows.Add(name.GetHashCode(), group_ID, group_Name, domain, name, fullname, "", "", 0, 0, 0, "", "", "");//,created.ToString("MMddyyyy"));
+        
+                DateTime created = CommonPlace.ReturnCreationDate(domain, name);
 
-                //if (CommonPlace.visited.ContainsKey(name))
-                //{
-                //  CommonPlace.visited[name]++;
-                // continue;
-                //}
-
-                //CommonPlace.visited.Add(name, 1);
-
-
+                CommonPlace.entryVerticesTable.Rows.Add(name.GetHashCode(), group_ID, group_Name, domain, name, fullname, 0, 0, "", "", "", created.Year, created.Day,created.Month, created.TimeOfDay.ToString());
+             
+                CommonPlace.nodes.AddZero(domain, name);
+            
                 domains = new List<string>();
 
 
@@ -66,9 +62,7 @@ namespace entryPointsGenerator
                 HtmlDocument doc2 = new HtmlDocument();
                 doc2.LoadHtml(htmlcol[0].InnerHtml);
 
-                CommonPlace.visited.AddZero(domain, name);
-
-                foreach (HtmlNode node in doc2.DocumentNode.SelectNodes("//a"))
+               foreach (HtmlNode node in doc2.DocumentNode.SelectNodes("//a"))
                 {
                     String outerhtml = node.OuterHtml;
                     if (outerhtml.IndexOf("hreflang") < 0) continue;
@@ -81,9 +75,11 @@ namespace entryPointsGenerator
                         String buff = outerhtml.Substring(outerhtml.IndexOf("/wiki/"), outerhtml.Length - outerhtml.IndexOf("/wiki/"));
                         String[] buu = buff.Split(delimiterA); ;
                         //created = CommonPlace.ReturnCreationDate(bu[1], buu[2]);
-                        CommonPlace.entrypagesTable.Rows.Add(buu[2].GetHashCode(), group_ID, group_Name, bu[1], buu[2], buu[4], "", "", 0, 0, 0, "", "", "");//, created.ToString("MMddyyyy"));
+                        //CommonPlace.entrypagesTable.Rows.Add(buu[2].GetHashCode(), group_ID, group_Name, bu[1], buu[2], buu[4], "", "", 0, 0, 0, "", "", "");//, created.ToString("MMddyyyy"));
                         if (!CommonPlace.IsInPair(name, buu[2])) CommonPlace.domainPair.Add(new DomainPair(domain, bu[1], name, buu[2]));
-                        CommonPlace.visited.AddZero(bu[1], buu[2]);
+                        CommonPlace.nodes.AddZero(bu[1], buu[2]);
+                        created = CommonPlace.ReturnCreationDate(bu[1], buu[2]);
+                        CommonPlace.entryVerticesTable.Rows.Add(buu[2].GetHashCode(), group_ID, group_Name, bu[1], buu[2], buu[4], 0, 0, "", "", "", created.Year, created.Day, created.Month, created.TimeOfDay.ToString());
                         //CommonPlace.visited.Add(buu[2],1);
                     }
 

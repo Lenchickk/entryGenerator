@@ -59,7 +59,10 @@ namespace entryPointsGenerator
         {
             for (int i = 0; i < domain.Count; i++)
             {
-                if (d == domain[i] && n == name[i]) return true;
+                if (d == domain[i] && n == name[i])
+                {
+                    return true;
+                }
             }
             return false;
         }

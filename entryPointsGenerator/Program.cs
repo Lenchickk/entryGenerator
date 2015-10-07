@@ -22,7 +22,7 @@ namespace entryPointsGenerator
                 EntryGate.LoadInitials(file);
                 Digger.Wraper();
                 //String str = file.Substring(file.i.IndexOf(@"\"), file.Length - file.IndexOf("_catalog"));
-                CommonPlace.TableToFile(viewDirectory + rand.Next(100).ToString() + CommonPlace.Depth.ToString() + "_" + count.ToString() + "_in.csv");
+                CommonPlace.TableToFile(viewDirectory + rand.Next(100).ToString() + CommonPlace.Depth.ToString() + "_" + count.ToString());
                 //helper.processPipeFile(file);
             }
 

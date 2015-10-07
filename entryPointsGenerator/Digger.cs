@@ -43,25 +43,14 @@ namespace entryPointsGenerator
                     }
                 }
 
-
-
                 if (current == depth + 1) continue;
 
 
-                DataTable local = CommonPlace.CreateDataTable();
+                DataTable local = CommonPlace.CreateVerticesTable();
                 String lookup = CommonPlace.LookUpPage(r["domain"].ToString(), r["name"].ToString());
+                       
+          
                 String htmlCode;
-
-
-                //CookieContainer cookie = new CookieContainer();
-                //WebClient client = new WebClient();
-                //client.Encoding = System.Text.Encoding.UTF8;
-
-
-                //client.Headers.Add(HttpRequestHeader.Cookie, "somecookie");
-                //htmlCode = client.DownloadString(lookup);
-                //client.Dispose();
-
 
                 htmlCode = CommonPlace.GetWebData(lookup);
 
@@ -98,41 +87,45 @@ namespace entryPointsGenerator
                         String[] ou = where.Split(c);
 
                         String[] ou1 = where2.Split(c);
-                        Console.WriteLine(ou1[0]);
-                        //CommonPlace.domainPair.Add(new DomainPair(r["domain"],));
+               
 
-
-
-                        if (CommonPlace.visited.ContainsKey(r["domain"].ToString(), ou[0]))
+                             //add the edge
+                       if (CommonPlace.nodes.ContainsKey(r["domain"].ToString(), ou[0]) && (CommonPlace.nodes.GetWeight(r["domain"].ToString(), ou[0]) > 0))
                         {
-                            CommonPlace.visited.PlusWeight(r["domain"].ToString(), ou[0]);
+                            CommonPlace.nodes.PlusWeight(r["domain"].ToString(), ou[0]); 
                             continue;
                         }
-                        /// skip:
-                        CommonPlace.visited.Add(r["domain"].ToString(), ou[0]);
 
+                       CommonPlace.nodes.Add(r["domain"].ToString(), ou[0]);
+                        //addlocaltable
+                        //addglobalverticestable
+                        CommonPlace.entryEdgesTable.Rows.Add(r["name"].ToString().GetHashCode() + ou[0].GetHashCode(), ou[0].GetHashCode(),
+                                     r["groupID"].ToString(), r["groupName"].ToString(), r["domain"].ToString(), ou[0], ou1[0],
+                                      r["name"].ToString(), r["fullname"].ToString(), r["name"].ToString().GetHashCode());
 
+                        Console.WriteLine(ou1[0]);
+                   
                         foreach (String la in l)
                         {
-                            if (la == r["domain"].ToString()) continue;
+                            if (la == r["domain"].ToString())
+                            {
+                               
+                                continue;
+                            }
                             String lookup1 = CommonPlace.LookUpPage(r["domain"].ToString(), ou[0]);
                             String result = CommonPlace.ReturnLangLink(la, lookup1);
                             if (result == "") continue;
                             if (CommonPlace.IsInPair(r["name"].ToString(), result)) continue;
-
+                           
                             CommonPlace.domainPair.Add(new DomainPair(r["domain"].ToString(), la, ou[0], result));
                         }
 
-
-
-                        //DateTime created = CommonPlace.ReturnCreationDate(r["domain"].ToString(), ou1[0]);
-                        CommonPlace.entrypagesTable.Rows.Add(ou[0].GetHashCode(), r["groupID"], r["groupName"], r["domain"], ou[0], ou1[0], r["name"], r["fullname"], current, r["ID"]);//, created.ToString("MMddyyyy"));
-
-
-
-                        local.Rows.Add(ou[0].GetHashCode(), r["groupID"], r["groupName"], r["domain"], ou[0], ou1[0], r["name"], r["fullname"], current, r["ID"]);
-
-
+                        DateTime created = CommonPlace.ReturnCreationDate(r["domain"].ToString(), ou[0]);
+                        CommonPlace.entryVerticesTable.Rows.Add(ou[0].GetHashCode(), r["groupID"], r["groupName"], r["domain"], ou[0], ou1[0], current, 0, "", "", "", 
+                               created.Year, created.Day, created.Month, created.TimeOfDay.ToString());
+                        local.Rows.Add(ou[0].GetHashCode(), r["groupID"], r["groupName"], r["domain"], ou[0], ou1[0], current, 0, "", "", "",
+                                                            created.Year, created.Day, created.Month, created.TimeOfDay.ToString());
+                 
                         Extractor(local, CommonPlace.Depth, current + 1, false);
 
                     }
