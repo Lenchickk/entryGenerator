@@ -25,9 +25,10 @@ namespace entryPointsGenerator
             return false;
         }
 
-        static public Int16 Depth = 2;
-        static public void Activate()
+        static public Int16 Depth;
+        static public void Activate(Int16 d)
         {
+            CommonPlace.Depth = d;
             entryEdgesTable = CreateEdgesTable();
             entryVerticesTable = CreateVerticesTable();
             CreateSeeAlsoDict();
@@ -130,8 +131,8 @@ namespace entryPointsGenerator
             else
             {
                 sw = new StreamWriter(file1, true, System.Text.Encoding.UTF8);
-                //sw.WriteLine("ID\tchildID\tgroupID\tgroupName\tdomain\tname\tparentname\tfullname\tparentfulname\tdepth\tparentID\tweight\trunode\tennode\tuknode\tyear\tday\tmonth\ttime");
-                sw.WriteLine("ID\tchildID\tgroupID\tgroupName\tdomain\tname\tparentname\tfullname\tparentfulname\tparentID");
+                sw.WriteLine("ID\tgroupID\tgroupName\tdomain\tname\tfullname\tdepth\tweight\trunode\tennode\tuknode\tyear\tday\tmonth\ttime");
+               
             }
 
             foreach (DataRow r in entryVerticesTable.Rows)
@@ -159,13 +160,13 @@ namespace entryPointsGenerator
             else
             {
                 sw = new StreamWriter(file2, true, System.Text.Encoding.UTF8);
-                sw.WriteLine("ID\tgroupID\tgroupName\tdomain\tname\tfullname\tdepth\tweight\tru\ten\tuk\tcyear\tcday\tcmonth\ttime");
+                sw.WriteLine("ID\tchildID\tgroupID\tgroupName\tname\tparentname\tdomain\tparentfullname\tfullname\tparentID");
             }
 
             foreach (DataRow r in entryEdgesTable.Rows)
             {
-                sw.WriteLine(r["ID"] + "\t" + r["childID"] + "\t" + r["groupID"] + "\t" + r["groupName"] + "\t" + r["domain"] + "\t" + r["name"]
-                   + "\t" + r["parentname"] + "\t" + r["fullname"] + "\t" + r["parentfullname"] + "\t" + r["parentID"]);
+                sw.WriteLine(r["ID"] + "\t" + r["childID"] + "\t" + r["groupID"] + "\t" + r["groupName"] + "\t"  + "\t" + r["name"]
+                   + "\t" + r["parentname"] + "\t" + r["domain"] + "\t" + r["parentfullname"] + "\t" + r["fullname"]  + "\t" + r["parentID"]);
              }
 
 

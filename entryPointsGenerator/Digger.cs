@@ -87,21 +87,26 @@ namespace entryPointsGenerator
                         String[] ou = where.Split(c);
 
                         String[] ou1 = where2.Split(c);
-               
 
                              //add the edge
-                       if (CommonPlace.nodes.ContainsKey(r["domain"].ToString(), ou[0]) && (CommonPlace.nodes.GetWeight(r["domain"].ToString(), ou[0]) > 0))
+                        if (CommonPlace.nodes.ContainsKey(r["domain"].ToString(), ou[0]) && (CommonPlace.nodes.GetWeight(r["domain"].ToString(), ou[0]) > 0))
                         {
-                            CommonPlace.nodes.PlusWeight(r["domain"].ToString(), ou[0]); 
+                            CommonPlace.nodes.PlusWeight(r["domain"].ToString(), ou[0]);
+
+                            CommonPlace.entryEdgesTable.Rows.Add(r["name"].ToString().GetHashCode() + ou[0].GetHashCode(), ou[0].GetHashCode(),
+                                r["groupID"].ToString(), r["groupName"].ToString(), r["domain"].ToString(), ou[0], ou1[0],
+                                         r["name"].ToString(), r["fullname"].ToString(), r["name"].ToString().GetHashCode());
                             continue;
                         }
 
                        CommonPlace.nodes.Add(r["domain"].ToString(), ou[0]);
+
+                       CommonPlace.entryEdgesTable.Rows.Add(r["name"].ToString().GetHashCode() + ou[0].GetHashCode(), ou[0].GetHashCode(),
+                           r["groupID"].ToString(), r["groupName"].ToString(), r["domain"].ToString(), ou[0], ou1[0],
+                                    r["name"].ToString(), r["fullname"].ToString(), r["name"].ToString().GetHashCode());
                         //addlocaltable
                         //addglobalverticestable
-                        CommonPlace.entryEdgesTable.Rows.Add(r["name"].ToString().GetHashCode() + ou[0].GetHashCode(), ou[0].GetHashCode(),
-                                     r["groupID"].ToString(), r["groupName"].ToString(), r["domain"].ToString(), ou[0], ou1[0],
-                                      r["name"].ToString(), r["fullname"].ToString(), r["name"].ToString().GetHashCode());
+    
 
                         Console.WriteLine(ou1[0]);
                    
