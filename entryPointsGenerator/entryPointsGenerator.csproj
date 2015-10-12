@@ -48,6 +48,7 @@
     <Compile Include="CommonPlace.cs" />
     <Compile Include="Digger.cs" />
     <Compile Include="DomainPair.cs" />
+    <Compile Include="EdgeVisited.cs" />
     <Compile Include="EntryGate.cs" />
     <Compile Include="PairVisited.cs" />
     <Compile Include="Program.cs" />

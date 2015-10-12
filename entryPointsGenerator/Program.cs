@@ -11,14 +11,15 @@ namespace entryPointsGenerator
         static void Main(string[] args)
         {
             RunForAll(1);
-            RunForAll(2);
-            RunForAll(3);
+            //RunForAll(2);
+            //RunForAll(3);
 
         }
 
         static void RunForAll(Int16 d)
         {
-            String viewDirectory = @"C:\Users\Lenchick\Google Drive\WASHU FALL2015\play ground\pipe\";
+            String viewDirectory = @"C:\Users\Lenchick\Google Drive\WASHU FALL2015\play ground\pipe\analysis\";
+            String outDirectory = @"C:\Users\Lenchick\Google Drive\WASHU FALL2015\play ground\pipe\check\";
             String[] viewsFiles = System.IO.Directory.GetFiles(viewDirectory, "*_catalog.csv");
 
             CommonPlace.Activate(d);
@@ -30,7 +31,7 @@ namespace entryPointsGenerator
                 System.Random rand = new Random();
                 EntryGate.LoadInitials(file);
                 Digger.Wraper();
-                CommonPlace.TableToFile(viewDirectory + rand.Next(100).ToString() + "___" + CommonPlace.Depth.ToString() + "___" + count.ToString());
+                CommonPlace.TableToFile(outDirectory + rand.Next(100).ToString() + "___" + CommonPlace.Depth.ToString());
            }
 
 

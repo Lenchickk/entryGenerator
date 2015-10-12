@@ -35,6 +35,7 @@ namespace entryPointsGenerator
             CreateSeeAlsoDict2();
             nodes = new PairVisited();
             domainPair = new List<DomainPair>();
+            edges = new EdgeVisited();
         }
         static public String LookUpPage(String domain, String name)
         {
@@ -47,6 +48,7 @@ namespace entryPointsGenerator
         public static Dictionary<String, String> seeAlso2;
         public static PairVisited nodes;
         public static List<DomainPair> domainPair;
+        public static EdgeVisited edges;
 
         static public DataTable CreateEdgesTable()
         {
